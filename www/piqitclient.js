@@ -3,24 +3,30 @@ var piqitclient = {
         var camQuality = params.quality ? params.quality : 75;
         var camSourceType = params.sourceType ? params.sourceType : Camera.PictureSourceType.CAMERA;
         var camAllowEdit = params.allowEdit ? true : false;
-        var credentials = params.key;
+        var key = params.key;
+        var gender = "";
+        var category = "";
+        if (params.category != null)
+            category = params.category;
+        if (params.gender != null)
+            gender = params.gender;
         var options = {quality: camQuality, destinationType: Camera.DestinationType.DATA_URL,
             sourceType: camSourceType, allowEdit: camAllowEdit, encodingType: Camera.EncodingType.JPEG,
             saveToPhotoAlbum: false};
 
         navigator.camera.getPicture(function(imageData) {
-            piqitclient.onPhotoDataSuccess(imageData,credentials,success, fail);
+            piqitclient.onPhotoDataSuccess(imageData, key,category,gender, success, fail);
         }
         , function() {
             piqitclient.onFail(fail);
         }
         , options);
     },
-    onPhotoDataSuccess: function(imageData,credentials, successCallback, failureCallback) {
+    onPhotoDataSuccess: function(imageData, key, category, gender, successCallback, failureCallback) {
         $.ajax({
             type: "POST",
-            url: "http://staging.streamoid.com/demo/cordovaApi.php?key="+credentials,
-            data: {imageData: imageData},
+            url: "http://staging.streamoid.com/demo/cordovaApi.php",
+            data: {imageData: imageData, key: key, gender: gender, category: category},
             error: function(jqXHR, textStatus, errorThrown) {
                 failureCallback();
             }

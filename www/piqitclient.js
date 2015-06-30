@@ -15,7 +15,7 @@ var piqitclient = {
             saveToPhotoAlbum: false};
 
         navigator.camera.getPicture(function(imageData) {
-            piqitclient.onPhotoDataSuccess(imageData, key,category,gender, success, fail);
+            piqitclient.onPhotoDataSuccess(imageData, key, category, gender, success, fail);
         }
         , function() {
             piqitclient.onFail(fail);
@@ -23,16 +23,23 @@ var piqitclient = {
         , options);
     },
     onPhotoDataSuccess: function(imageData, key, category, gender, successCallback, failureCallback) {
-        $.ajax({
-            type: "POST",
-            url: "http://staging.streamoid.com/demo/cordovaApi.php",
-            data: {imageData: imageData, key: key, gender: gender, category: category},
-            error: function(jqXHR, textStatus, errorThrown) {
+        var http = new XMLHttpRequest();
+        var url = "http://staging.streamoid.com/demo/cordovaApi.php";
+        var params = "imageData=" + imageData + "&key=" + key + "&category=" + category + "&gender=" + gender;
+        http.open("POST", url, true);
+        //Send the proper header information along with the request
+        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        http.setRequestHeader("Content-length", params.length);
+        http.setRequestHeader("Connection", "close");
+
+        http.onreadystatechange = function() {//Call a function when the state changes.
+            if (http.readyState == 4 && http.status == 200) {
+                successCallback(http.responseText);
+            }else{
                 failureCallback();
             }
-        }).done(function(data) {
-            successCallback(data);
-        });
+        }
+        http.send(params);
     },
     onFail: function(failureCallback) {
         failureCallback();

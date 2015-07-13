@@ -4,6 +4,7 @@ var piqitclient = {
         var camSourceType = params.sourceType ? params.sourceType : Camera.PictureSourceType.CAMERA;
         var camAllowEdit = params.allowEdit ? true : false;
         var key = params.key;
+        var user = params.user ? params.user : "anon";
         var count = 10;
         var gender = "";
         var category = "";
@@ -18,14 +19,14 @@ var piqitclient = {
             saveToPhotoAlbum: false};
 
         navigator.camera.getPicture(function(imageData) {
-            piqitclient.onPhotoDataSuccess(imageData, key, category, gender,count, success, fail);
+            piqitclient.onPhotoDataSuccess(imageData, key,user, category, gender,count, success, fail);
         }
         , function() {
             piqitclient.onFail(fail);
         }
         , options);
     },
-    onPhotoDataSuccess: function(imageData, key, category, gender,count, successCallback, failureCallback) {
+    onPhotoDataSuccess: function(imageData, key,user, category, gender,count, successCallback, failureCallback) {
         
         //algo for scaling down the image to max dimension of 640p keeping aspect intact
         var img = new Image();
@@ -54,7 +55,7 @@ var piqitclient = {
         
         var http = new XMLHttpRequest();
         var url = "http://staging.streamoid.com/demo/cordovaApi.php";
-        var params = "imageData=" + newImagedata + "&key=" + key + "&category=" + category + "&gender=" + gender+"&count="+count;
+        var params = "imageData=" + newImagedata + "&key=" + key+ "&user=" + user + "&category=" + category + "&gender=" + gender+"&count="+count;
         http.open("POST", url, true);
         //Send the proper header information along with the request
         http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");

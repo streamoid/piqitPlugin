@@ -31,6 +31,7 @@ var piqitclient = {
         //algo for scaling down the image to max dimension of 640p keeping aspect intact
         var img = new Image();
         img.src = "data:image/jpeg;base64," + imageData;
+        var dataUrl="data:image/jpeg;base64," + imageData;
         var MAX_WIDTH = 640;
         var width = img.width;
         var height = img.height;
@@ -64,7 +65,7 @@ var piqitclient = {
 
         http.onreadystatechange = function() {//Call a function when the state changes.
             if (http.readyState == 4 && http.status == 200) {
-                successCallback(http.responseText);
+                successCallback(http.responseText,dataUrl);
             } else {
                 failureCallback();
             }
